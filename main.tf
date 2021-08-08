@@ -4,16 +4,16 @@ resource "random_id" "db_name_suffix" {
 
 module "bucket" {
   source            = "./modules/bucket"
-  image_bucket_name = "tf-image-storage-bucket"
-  bucket_location   = "US"
+  image_bucket_name = "terraform-state280721"
+  bucket_location   = "EU"
   destroy_policy    = "true"
 }
 
-module "in_group" {
-  source           = "./modules/in_group"
+module "instance_group" {
+  source           = "./modules/instance_group"
   instance_network = module.network.bookshelf_vpc.id
   boot_disc_image  = "debian-cloud/debian-9"
-  startup_script = templatefile("?????????????", {
+  startup_script = templatefile("startup-script.sh", {
     db_connect   = module.sql.connection_name,
     bucket       = module.bucket.storage_bucket.name,
     db_user_name = var.db_user,
@@ -22,7 +22,7 @@ module "in_group" {
   service_account_for_instance = module.serv_account.custom_instance_service_account
   template_name                = "boockshelf-template"
   instance_machine_type        = var.gce_instance_type
-  igm_region                   = "us-central1"
+  igm_region                   = "europe-west3"
   instance_tag                 = var.instance_network_tag
 }
 
@@ -31,8 +31,8 @@ module "loadbalancer" {
   backend_instance_group = module.instance_group.instance_grp
 }
 
-module "net" {
-  source       = "./modules/net"
+module "network" {
+  source       = "./modules/network"
   vpc_name     = "bookshelf-vpc-tf"
   instance_tag = var.instance_network_tag
 }
@@ -57,8 +57,8 @@ module "nat" {
   selected_network = module.network.bookshelf_vpc.id
 }
 
-module "serv_acc" {
-  source                  = "./modules/serv_acc"
+module "serv_account" {
+  source                  = "./modules/serv_account"
   instance_servaccount_id = "bookshelf-sa-1"
 }
 
