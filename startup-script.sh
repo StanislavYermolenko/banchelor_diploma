@@ -14,6 +14,10 @@ useradd -m -d /home/pythonapp pythonapp
 # Fetch source code
 export HOME=/root
 git clone https://github.com/StanislavYermolenko/getting-started-python.git -b steps /opt/app
+#cloud SQL
+wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+chmod +x cloud_sql_proxy
+./cloud_sql_proxy -instances=${db_connect}=tcp:0.0.0.0:3306 &
 cat <<EOF > /opt/app/7-gce/config.py
 # See the License for the specific language governing permissions and
 # limitations under the License.
@@ -38,18 +42,18 @@ DATA_BACKEND = 'cloudsql'
 
 # Google Cloud Project ID. This can be found on the 'Overview' page at
 # https://console.developers.google.com
-PROJECT_ID = 'bookshelf-319711'
+PROJECT_ID = "${project_id}"
 
 # CloudSQL & SQLAlchemy configuration
 # Replace the following values the respective values of your Cloud SQL
 # instance.
-CLOUDSQL_USER = 'root'
-CLOUDSQL_PASSWORD = 'Fb9saKDe8rE9gBjb'
-CLOUDSQL_DATABASE = 'bookshelf'
+CLOUDSQL_USER = "${db_user_name}"
+CLOUDSQL_PASSWORD = "${db_pass}"
+CLOUDSQL_DATABASE = "bookshelf"
 # Set this value to the Cloud SQL connection name, e.g.
 #   "project:region:cloudsql-instance".
 # You must also update the value in app.yaml.
-CLOUDSQL_CONNECTION_NAME = 'bookshelf-319711:europe-west3:sql1'
+CLOUDSQL_CONNECTION_NAME = "${db_connect}"
 
 # The CloudSQL proxy is used locally to connect to the cloudsql instance.
 # To start the proxy, use:
@@ -96,7 +100,7 @@ MONGO_URI = 'mongodb://user:password@host:27017/database'
 #
 # You can adjust the max content length and allow extensions settings to allow
 # larger or more varied file types if desired.
-CLOUD_STORAGE_BUCKET = 'unique140721'
+CLOUD_STORAGE_BUCKET = "${bucket}"
 MAX_CONTENT_LENGTH = 8 * 1024 * 1024
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
@@ -120,12 +124,7 @@ EOF
 virtualenv -p python3 /opt/app/7-gce/env
 source /opt/app/7-gce/env/bin/activate
 /opt/app/7-gce/env/bin/pip install -r /opt/app/7-gce/requirements.txt
-
-#cloud SQL
-wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
-chmod +x cloud_sql_proxy
-sudo ./cloud_sql_proxy -instances=bookshelf-319711:europe-west3:sql1=tcp:0.0.0.0:3306 &
-
+python /opt/app/7-gce/bookshelf/model_cloudsql.py
 # Set ownership to newly created account
 chown -R pythonapp:pythonapp /opt/app
 

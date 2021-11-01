@@ -13,3 +13,5 @@ variable "selected_network" {}
 variable "db_user_name" {}
 
 variable "db_user_password" {}
+
+variable "sql_region" {}

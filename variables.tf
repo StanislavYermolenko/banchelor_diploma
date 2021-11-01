@@ -25,3 +25,9 @@ variable "instance_network" {}
 variable "startup_script" {}
 
 variable "service_account_for_instance" {}
+
+variable "region" {}
+
+variable "project_id" {}
+
+variable "sql_region" {}

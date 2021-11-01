@@ -4,7 +4,7 @@ resource "random_id" "db_name_suffix" {
 
 module "bucket" {
   source            = "./modules/bucket"
-  image_bucket_name = "terraform-state280721"
+  image_bucket_name = "terraform-state-august2021"
   bucket_location   = "EU"
   destroy_policy    = "true"
 }
@@ -16,6 +16,7 @@ module "instance_group" {
   startup_script = templatefile("startup-script.sh", {
     db_connect   = module.sql.connection_name,
     bucket       = module.bucket.storage_bucket.name,
+    project_id   = var.project_id
     db_user_name = var.db_user,
     db_pass      = var.db_user_pswd
   })
@@ -44,6 +45,7 @@ module "sql" {
   db_password             = var.db_pswd
   db_user_name            = var.db_user
   db_user_password        = var.db_user_pswd
+  sql_region              = var.sql_region 
   bookshelf_database_name = "bookshelf"
   machine_type            = "db-n1-standard-2"
   selected_network        = module.network.bookshelf_vpc.id

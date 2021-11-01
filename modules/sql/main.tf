@@ -2,6 +2,7 @@ resource "google_sql_database_instance" "bookshelf_db" {
   name                = var.db-instance_name
   database_version    = var.db_version
   root_password       = var.db_password
+  region              = var.sql_region
   deletion_protection = false
   settings {
     tier = var.machine_type

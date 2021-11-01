@@ -23,7 +23,7 @@ resource "google_compute_instance_template" "bookshelf_template" {
   metadata_startup_script = var.startup_script
   service_account {
     email  = var.service_account_for_instance
-    scopes = ["cloud-platform"] #storage-ro
+    scopes = ["cloud-platform"]
   }
 }
 
@@ -54,6 +54,10 @@ resource "google_compute_region_instance_group_manager" "bookshelfserver" {
     name = "http"
     port = "8080"
   }
+
+#  lifecycle {
+#    create_before_destroy = true
+#  }
 
   auto_healing_policies {
     health_check      = google_compute_health_check.autohealing.id

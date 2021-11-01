@@ -11,3 +11,8 @@ variable "nat_name" {
   default = "default-nat"
 
 }
+
+variable "region" {
+  default = "europe-west3"
+
+}
