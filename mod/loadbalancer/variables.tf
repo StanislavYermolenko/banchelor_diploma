@@ -1,1 +1,0 @@
-variable "backend_instance_group" {}
